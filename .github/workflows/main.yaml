@@ -13,3 +13,15 @@ jobs:
       - run: docker build -t actualeyes/docker-react -f Dockerfile.dev .
 #      - run: docker run -e CI=true actualeyes/docker-react npm test
       - run: docker run -e CI=true actualeyes/docker-react npm run test -- --coverage
+
+      - name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: Frontend
+          environment_name: Frontend-env-1
+          existing_bucket_name: elasticbeanstalk-us-east-1-106466642031
+          region: us-east-1
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip
